@@ -2,13 +2,9 @@ from modules.import_modules.txt_import import txt_import
 from modules.import_modules.xml_import import xml_import
 from modules.import_modules.csv_import import csv_import
 
-def import_interface():
-    print("Импортируемый файл должен в папке import")
-    filename = input("Введите наименование файла с расширением: ")
-    filename = "import/" + filename
+def import_interface(filename):
     try:
         open(filename)
-
     except:
         print("Указанный файл отстутствует")
         return

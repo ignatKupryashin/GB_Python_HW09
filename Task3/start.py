@@ -7,6 +7,7 @@ from telebot import types
 from modules.export_modules.xml_generator import create_xml
 from modules.export_modules.txt_generator import create_txt
 from modules.export_modules.csv_generator import create_csv
+from modules.import_module import import_interface
 
 
 bot = TeleBot("5679603314:AAHWRut6ZCpLYgTEHMo-pDqQvtUahdwqjAM")
@@ -89,7 +90,15 @@ def choose_export(msg):
     start
 
 
-def
+@bot.message_handler(content_types=['document'])
+def import_file(msg):
+    file = bot.get_file(msg.document.file_id)
+    downloaded_file = bot.download_file(file.file_path)
+    path = "export/" + msg.document.file_name
+    with open(path, "wb") as f_out:
+        f_out.write(downloaded_file)
+    import_interface(path)
+    bot.send_message(chat_id=msg.from_user.id, text="Данные импортированы")
 
 
 @bot.message_handler()
@@ -102,7 +111,8 @@ def main_interface(msg):
     elif msg.text == "Экспорт справочника":
         export_interface(msg)
     elif msg.text == "Импорт справочника":
-        pass
+        next_message = bot.send_message(chat_id=msg.from_user.id, text=f"Отправьте файл:")
+        bot.register_next_step_handler(callback=import_file, message=next_message)
 
 
 bot.infinity_polling()
